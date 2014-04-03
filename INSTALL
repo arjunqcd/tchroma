@@ -1,0 +1,139 @@
+Installation instructions for CHROMA
+=================================
+
+1) Configuration.
+---------------- 
+
+CHROMA has been modified to use the GNU autoconf build system.
+You'll need at least  g++-4.X  or above. The code has been tested
+to work under gcc-4.X and Intel compiler (icc) version 9 and above.
+
+To configure you have to execute the command:
+
+./configure <configuration options>
+
+Some important options for CHROMA are
+
+	--with-qdp=DIR
+        --enable-sse-wilson-dslash
+        --enable-dwf-cg
+        --with-qmp=DIR 
+        --prefix=<installation directory>
+
+There must be a previously installed version of qdp++ with a path
+specified by "DIR" above. Whatever architecture was used for qdp++
+will be used by chroma - chroma just builds on top of qdp++.
+
+The other individual switches:
+
+ --prefix=<installdir>            specifies where the Chroma headers 
+                                  and libraries should be installed 
+                                  when you type: make install. 
+	                          By default it is set to /usr/local.
+
+ --enable-sse-wilson-dslash       enables the SSE Wilson dslash code
+
+ --enable-dwf-cg                  enables the DWF CG inverter code on BG/L 
+                                  and SSE in both single and double precision.
+
+ --with-gmp=<dir>                 use the Gnu Multi-Precision lib in <dir>
+
+
+
+Specifying a compiler:
+
+You can specify a compiler by using the CXX environment variable on the 
+configure command line eg:
+
+./configure CXX=xlC 
+
+or 
+
+./configure CXX=powerpc-gnu-elf-g++
+
+This currently takes care of the cross compiling issues, as there is currently
+no need to distinguish between host and target compilers.
+
+Autoconf guesses some default compiler flags for you. On Linux this is
+usually "-g -O2 -Wall". You can override (specify more optimisations)
+by defining the CXXFLAGS variable which gets passed on by autoconf.
+Likewise if you need extra libraries (like -lm) you can specify these
+with LDFLAGS and LIBS environment variables. These flags are used in
+addition to those used in the provided installation of qdp++.
+
+./configure CXX=g++ CXXFLAGS="-O3" LIBS="-lm"
+
+You'll need at least  g++-4.X  or above. The code has been tested
+to work under gcc-4.X and Intel compiler (icc) version 9 and above.
+
+2) Building
+-----------
+There are several ways to build CHROMA
+
+a) CHROMA is suitable for 'installation' (where you make the programs, and
+install them and then just run them -- This is likely to be the least common
+method of using chroma). In this case just type 
+
+make 
+make install
+
+in the directory where you typed configure. The libraries and executables
+will be installed in whatever you set --prefix to.
+
+b) Working in the build directory:
+
+To make the libchroma.a library type:
+
+cd lib ; make
+
+in the directory where you ran configure.
+
+To make the mainprogs/tests programs type:
+
+cd mainprogs/tests ; make
+or
+cd mainprogs/main ; make 
+
+-- in this case ALL the available programs in mainprogs/tests  or
+in mainprogs/main  will be built. In the current setup, if a program
+in mainprogs/main or mainprogs/tests needs the libchroma.a to be built
+it should be built automatically.
+
+Alternatively, if you want to build an individual program say t_mesplq,
+you can do it by typing:
+
+cd mainprogs/tests ; make t_mesplq
+
+in the build directory.
+
+3) Building in a different directory from the Source
+----------------------------------------------------
+
+This is supported, and may be desirable if you wish to have several
+different configurations of the same source tree around. 
+Suppose you have the distribution unpacked in directory chroma
+you can then build say a scalar version in ./scalar-build as follows
+
+mkdir ./scalar-build
+cd ./scalar-build
+../qdp/configure --with-qdp=/usr/local/qdp++-scalar" CXXFLAGS=""
+gmake
+
+should build everything (libraries, mainprogs) using a scalar version
+of QDP++. If the installed version of QDP++ was a "parscalar"  build
+(a parallel version suitable for architectures like clusters of 
+workstations), then chroma will be built for this parscalar version.
+
+Note that QDP provides a bin/qdp++-config.sh  scripts which is used
+to query the include flags, libs, compiler, etc.
+
+4) Building the documentation
+-----------------------------
+
+All in good time ...
+
+5) Reporting Bugs etc.
+---------------------
+
+There are no bugs! In the case you make a mistake, you can send a bug
+report to  edwards@jlab.org
